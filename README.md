@@ -46,15 +46,15 @@ TLS is not immune against a semi-passive adversary, since it splits its payloads
 might reveal something about the internal state machine of the application. Let's look at a small example:
 
 **Passive adversary:**
-- Victim sends 20 TLS records
-- Node replies with 2 records
+1. Victim sends 20 TLS records
+2. Node replies with 2 records
 
 **Same victim-server interaction, but with a semi-passive adversary:**
-- Victim sends 20 TLS records
-- Adversary intercepts, and sends only the first 10 records
-- Node replies with 1 record
-- Adversary sends the next 10 records of the victim
-- Node replies with 1 record
+1. Victim sends 20 TLS records
+2. Adversary intercepts, and sends only the first 10 records
+3. Node replies with 1 record
+4. Adversary sends the next 10 records of the victim
+5. Node replies with 1 record
 
 You can see that in both scenarios, the end state between the victim and the node is the same.
 However, in the second scenario, the adversary gained additional information. They know that
