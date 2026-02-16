@@ -76,6 +76,9 @@ applications. The victim can choose to start one of two traffic generating appli
 Only one of these applications is bitcoin. Then, the adversary wins whenever it
 successfully identifies if the bitcoin application was started.
 
+With other words, the adversary wants to distinguish connection to bitcoin nodes,
+from connections to non-bitcoin nodes.
+
 Then, we specify applications that a bitcoin P2P connection could use as camouflage:
 - HTTPS
 - obfs4 (as mentioned in BIP-324)
