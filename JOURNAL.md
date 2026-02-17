@@ -1,8 +1,8 @@
 ## 17.02.2026
 
-[] Configure a Digital Ocean machine with a pruned node
-[] Research on existing work about P2P analysis
-[] Write the scope and plan for the project
+- [x] Configure a Digital Ocean machine with a pruned node
+- [x] Research on existing work about P2P analysis
+- [x] Write the scope and plan for the project
 
 **Journal:**
 
