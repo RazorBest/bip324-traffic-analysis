@@ -151,3 +151,56 @@ Depending on how much space you have available on the disk, you might increase
 the prune variable (or remove it at all). If you want to setup an archival node,
 and need some numbers, you can check: https://publicnode.com/snapshots. Last time
 I checked, you needed 700GB of disk.
+
+
+## Setting up a tcpdump sniffer
+
+First, we need to know our network interfaces, by running `ip a s`. My machine
+has two interfaces: eth0, and eth1. That's because Digital Ocean connects
+my machines to an internal network. Since we only care about packets going
+over the internet, we run `ip route | grep default` to find the IP of the
+default gateway, and we corelate that with the output of `ip a s`. In my case,
+the IP of the default gateway was configured on `eth0`. The machine is also
+configured such that the on IP of the interface is the same as the IP used
+on the internet.
+
+---
+
+To get a view of the active connections, we can run `ss -ap state established | grep $(pidof bitcoind)`.
+However, this includes both inbound and outbound ports. We can differentiate
+between them, when the TCP connection is made with `<HOST_IP>:8333`.
+
+For seeing the outbound connections of our bitcoin node, we can run:
+```
+ss -ap state established '( sport != :8333 )' | grep $(pidof bitcoind)
+```
+
+And, for seeing the inbound connections:
+```
+ss -ap state established '( sport == :8333 )' | grep $(pidof bitcoind)
+```
+
+My node currently has 10 outbound and 23 inbound connections.
+
+---
+
+I'm running the tcpdump command from root, but storing the pcap in /home/btc. Here's the command:
+```
+tcpdump -i eth0 port 8333 -w /home/btc/bitcoin_pcap/capture.pcap -Z btc
+```
+
+This captures both inbound and outbund P2P packets, and downgrades to the user btc. My system has an apparmor configuration that limits tcpdump from doing some stuff, including writing files outside the home directory. So, that's why `-Z btc` was needed.
+
+
+## Running netcap
+
+I followed this guide, in order to install and run netcap: https://docs.netcap.io/docker-containers.
+
+```
+docker pull dreadl0ck/netcap:ubuntu-v0.7.6
+docker run --rm -ti --network=host -v /home/btc/netcap_data:/netcap/data dreadl0ck/netcap:ubuntu-v0.7.6 bash
+```
+
+I used docker because when I tried running the naked binary, it required some dependencies which were not straightforward to installed. I figured out its better to have a reproduciable setup (for starting new machines or resetting them), so Docker was the next best option. If I knew NixOS, I would've probably tried that.
+
+go build -tags nodpi -ldflags "-s -w" -o .local/bin/net github.com/dreadl0ck/netcap/cmd
