@@ -192,7 +192,9 @@ tcpdump -i eth0 port 8333 -w /home/btc/bitcoin_pcap/capture.pcap -Z btc
 This captures both inbound and outbund P2P packets, and downgrades to the user btc. My system has an apparmor configuration that limits tcpdump from doing some stuff, including writing files outside the home directory. So, that's why `-Z btc` was needed.
 
 
-## Running netcap
+## Running netcap (old)
+
+I eventually gave up netcap. But these are the notes that I've written, before taking that decision.
 
 I followed this guide, in order to install and run netcap: https://docs.netcap.io/docker-containers.
 
@@ -204,3 +206,5 @@ docker run --rm -ti --network=host -v /home/btc/netcap_data:/netcap/data dreadl0
 I used docker because when I tried running the naked binary, it required some dependencies which were not straightforward to installed. I figured out its better to have a reproduciable setup (for starting new machines or resetting them), so Docker was the next best option. If I knew NixOS, I would've probably tried that.
 
 go build -tags nodpi -ldflags "-s -w" -o .local/bin/net github.com/dreadl0ck/netcap/cmd
+
+It turns out netcap has some errors. One of them being that a metric was registered twice in Prometheus. That was not the first issue I encountered, so I decided that netcap is not stable enough.
