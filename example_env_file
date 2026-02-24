@@ -1,0 +1,6 @@
+HOST_IP=1.2.3.4
+NODE_LABEL=nodename123_dev
+PUBLISH_SECRET_KEY_FILE=/home/linus/.ssh/id_ed25519_my_secret_
+PUBLISH_METRICS_REPO=git@github.com:linus/my-first-project.git
+GITNAME="linus"
+GITEMAIL="3217389+linus@users.noreply.github.com"
