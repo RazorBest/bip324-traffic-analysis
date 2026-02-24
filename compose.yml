@@ -12,7 +12,7 @@ services:
   pcap_exporter:
     build: ./pcap_exporter
     # Listens for Bitcoin P2P packets and exposes the summary metrics on an HTTP server
-    command: ["pcap_exporter", "--iface", "eth0", "--filter", "port 8333", "--host", "docker-host", "--port", "8000", "--map-ips", "${HOST_IP}=1.1.1.1", "--mask-ip-ports", "--dump-pcap", "--add-label", "node=${NODE_LABEL}"]
+    command: ["pcap_exporter", "--iface", "eth0", "--filter", "port 8333", "--host", "docker-host", "--port", "8000", "--map-ips", "${HOST_IP:?error}=1.1.1.1", "--mask-ip-ports", "--dump-pcap", "--add-label", "node=${NODE_LABEL:?error}"]
     # Host network is needed, in order to have access to the eth0 interface. Yes, we also need root access.
     network_mode: "host"
     extra_hosts:
@@ -22,7 +22,7 @@ services:
 
   pcap_publisher:
     build: ./publisher
-    command: ["python", "./main.py", "http://docker-host:8000/metrics", "${PUBLISH_METRICS_REPO}", "/run/secrets/publish_secret_key",  "${GITNAME}", "${GITEMAIL}"]
+    command: ["python", "./main.py", "http://docker-host:8000/metrics", "${PUBLISH_METRICS_REPO:?error}", "/run/secrets/publish_secret_key",  "${GITNAME:?error}", "${GITEMAIL:?error}"]
     secrets:
       - publish_secret_key
     extra_hosts:
@@ -30,7 +30,7 @@ services:
 
 secrets:
   publish_secret_key:
-    file: ${PUBLISH_SECRET_KEY_FILE}
+    file: ${PUBLISH_SECRET_KEY_FILE:?error}
 
 volumes:
   prometheus_volume:
