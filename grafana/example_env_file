@@ -1,2 +1,3 @@
 GF_SECURITY_ADMIN_PASSWORD=my_password
 GF_SERVER_ROOT_URL=https://google.com
+CADDY_PUBLIC_DOMAIN=example.com
