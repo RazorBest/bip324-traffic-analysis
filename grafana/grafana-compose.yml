@@ -1,0 +1,26 @@
+services:
+  grafana:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:?error}
+      - GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:?error}
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  caddy_proxy:
+    image: caddy:2.11.1-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  grafana_data:
+  caddy_data:
+  caddy_config:

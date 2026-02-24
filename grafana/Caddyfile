@@ -1,0 +1,19 @@
+bitcoin-grafana-viewer.duckdns.org {
+    # Sensitive admin/login paths
+    @sensitive_routes {
+        path /login* /admin* /api/admin* /api/auth* /api/users* /api/org*
+    }
+
+    # 2. Block the public from accessing these paths
+    respond @sensitive_routes "403 Forbidden - Admin access disabled" 403
+
+    # 3. Proxy all other traffic to the Grafana container
+    reverse_proxy grafana:3000
+    
+    # 4. Add basic security headers
+    header {
+        Strict-Transport-Security "max-age=31536000;"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+    }
+}
