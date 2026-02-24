@@ -12,6 +12,8 @@ services:
   caddy_proxy:
     image: caddy:2.11.1-alpine
     restart: unless-stopped
+    environment:
+      - CADDY_PUBLIC_DOMAIN=${CADDY_PUBLIC_DOMAIN:?error}
     ports:
       - "80:80"
       - "443:443"
