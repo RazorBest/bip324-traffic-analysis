@@ -13,6 +13,7 @@ ENV GF_USERS_ALLOW_ORG_CREATE=false
 
 ENV GF_SECURITY_DISABLE_GRAVATAR=true
 
+# A script that checks if the mandatory environment variavbles were set
 RUN echo '#!/bin/sh \n\
 set -e \n\
 : "${GF_SECURITY_ADMIN_PASSWORD:?GF_SECURITY_ADMIN_PASSWORD is required}" \n\
