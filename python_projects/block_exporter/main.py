@@ -1,3 +1,5 @@
+#!/bin/python
+
 from __future__ import annotations
 
 import argparse
@@ -22,7 +24,7 @@ class BlockTracker:
     def __init__(self, max_blocks_in_cache=288):
         self.blocks = []
         self.max_blocks_in_cache = max_blocks_in_cache
-        self.metric_generator_info = Info("bitcoin_block_info", "Information about a bitcoin block", ["height"])
+        self.metric_generator_info = Info("bitcoin_block", "Information about a bitcoin block", ["height"])
 
     @staticmethod
     def get_block_batch(from_height: Optional[int] = None) -> list[dict]:
@@ -138,8 +140,10 @@ def parse_args():
 
 
 def main() -> None:
+    print("Starting Block Exporter", flush=True)
     args = parse_args()
     server, thread = start_http_server(addr=args.host, port=args.port)
+    print(f"Started server on {args.host}:{args.port}", flush=True)
     run_exporter(server, thread)
 
 
