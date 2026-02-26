@@ -1,0 +1,16 @@
+# Reference: https://grafana.com/docs/grafana/latest/datasources/prometheus/configure/
+apiVersion: 1
+
+prune: true
+
+datasources:
+  - name: DS_PROMETHEUS
+    type: prometheus
+    access: proxy
+    url: $PROMETHEUS_URL # Example: http://localhost:9090
+    uid: NVBfKB1kmkHJd5ZRCRHYZtGQ
+    jsonData:
+      httpMethod: POST
+      cacheLevel: 'Low'
+      timeInterval: $PROMETHEUS_DATASOURCE_TIME_INTERVAL # Example: 15s
+      incrementalQueryOverlapWindow: 10m

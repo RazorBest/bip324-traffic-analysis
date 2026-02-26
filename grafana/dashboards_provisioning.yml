@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  - name: "Configuration for Public Dashboards"
+    orgId: 1
+    folder: 'Public Dashboards'
+    type: file
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/provisioning/dashboard_imports/
