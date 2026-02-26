@@ -20,13 +20,23 @@ services:
     volumes:
       - ./data:/data
 
-  pcap_publisher:
-    build: ./publisher
-    command: ["python", "./main.py", "http://docker-host:8000/metrics", "${PUBLISH_METRICS_REPO:?error}", "/run/secrets/publish_secret_key",  "${GITNAME:?error}", "${GITEMAIL:?error}"]
+  python_runners:
+    build: ./python_projects
+    # We want the container to stop if any of the jobs stop
+    command: >
+      bash -c "
+        trap 'kill -TERM -1' EXIT;
+        # Job 1
+        python ./publisher/main.py http://docker-host:8000/metrics ${PUBLISH_METRICS_REPO:?error} /run/secrets/publish_secret_key ${GITNAME:?error} ${GITEMAIL:?error} &
+        # Job 2
+        python ./block_exporter/main.py --host 0.0.0.0 --port 8001 &
+        wait -n
+        exit 1
+      "
     secrets:
       - publish_secret_key
     extra_hosts:
-    - "docker-host:host-gateway"
+      - "docker-host:host-gateway"
 
 secrets:
   publish_secret_key:
