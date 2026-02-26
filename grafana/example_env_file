@@ -1,3 +1,5 @@
 GF_SECURITY_ADMIN_PASSWORD=my_password
 GF_SERVER_ROOT_URL=https://google.com
 CADDY_PUBLIC_DOMAIN=example.com
+PROMETHEUS_URL=http://localhost:9090 # Optional
+PROMETHEUS_DATASOURCE_TIME_INTERVAL=5s # Optional

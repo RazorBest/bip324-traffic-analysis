@@ -13,6 +13,18 @@ ENV GF_USERS_ALLOW_ORG_CREATE=false
 
 ENV GF_SECURITY_DISABLE_GRAVATAR=true
 
+ENV GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboard_imports/public_dashboards.json
+
+# Env variables used in datasources_provisioning.yml
+ENV PROMETHEUS_URL=${PROMETHEUS_URL:-"http://localhost:9090"}
+ENV PROMETHEUS_DATASOURCE_TIME_INTERVAL=${PROMETHEUS_DATASOURCE_TIME_INTERVAL:-"1s"}
+
+# The path is present in dashboards_provisioning.yml
+RUN mkdir -p /etc/grafana/provisioning/dashboard_imports/
+COPY public_dashboards.json /etc/grafana/provisioning/dashboard_imports/
+COPY dashboards_provisioning.yml /etc/grafana/provisioning/dashboards/
+COPY datasources_provisioning.yml /etc/grafana/provisioning/datasources/
+
 # A script that checks if the mandatory environment variavbles were set
 RUN echo '#!/bin/sh \n\
 set -e \n\
@@ -29,4 +41,4 @@ ENTRYPOINT ["/home/grafana/entrypoint.sh"]
 
 # Example run: docker run --rm -e GF_SECURITY_ADMIN_PASSWORD=<PASSWORD> -e GF_SERVER_ROOT_URL=http://google.com -p 3000:3000 --name=grafana <IMAGE_ID>
 
-CMD ["grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
+CMD ["grafana", "server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
