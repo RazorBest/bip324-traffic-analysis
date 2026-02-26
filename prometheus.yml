@@ -7,4 +7,8 @@ scrape_configs:
     static_configs:
       # "docker-host" is a name defined in compose.yml
       - targets: ['docker-host:8000']
+  - job_name: 'blockchain_metrics'
+    static_configs:
+      # "blockchain-metrics-host" is a name defined in compose.yml
+      - targets: ['blockchain-metrics-host:8001']
 
