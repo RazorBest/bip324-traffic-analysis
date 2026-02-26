@@ -1,16 +1,16 @@
 {$CADDY_PUBLIC_DOMAIN} {
-    # Sensitive admin/login paths
-    @sensitive_routes {
-        path /login* /admin* /api/admin* /api/auth* /api/users* /api/org*
-    }
+	# Sensitive admin/login paths
+	@sensitive_routes {
+		path /login* /admin* /api/admin* /api/auth* /api/users* /api/org*
+	}
 
-    respond @sensitive_routes "403 Forbidden - Admin access disabled" 403
+	respond @sensitive_routes "403 Forbidden - Admin access disabled" 403
 
-    reverse_proxy grafana:3000
-    
-    header {
-        Strict-Transport-Security "max-age=31536000;"
-        X-Content-Type-Options "nosniff"
-        X-Frame-Options "SAMEORIGIN"
-    }
+	reverse_proxy grafana:3000
+
+	header {
+		Strict-Transport-Security "max-age=31536000;"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+	}
 }
