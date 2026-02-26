@@ -8,6 +8,8 @@ services:
       - prometheus_volume:/prometheus
     ports:
       - 127.0.0.1:9090:9090
+    links:
+      - python_runners:blockchain-metrics-host
 
   pcap_exporter:
     build: ./pcap_exporter
