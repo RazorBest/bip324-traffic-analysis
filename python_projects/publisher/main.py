@@ -35,12 +35,10 @@ def publish_service(metrics_url: str, github_url: str, path_secret_key: str, git
 
 
 def main():
-    print("Starting the publisher")
     if len(sys.argv) < 6:
         print("Usage: python3 main.py <metrics_url> <github_publish_url> <path_to_secret_key>")
         return 1
 
-    print(f"Args: {sys.argv}", flush=True)
     metrics_url = sys.argv[1]
     github_url = sys.argv[2]
     path_secret_key = sys.argv[3]
