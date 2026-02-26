@@ -6,7 +6,8 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:?error}
       - GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:?error}
-      - PROMETHEUS_URL=${PROMETHEUS_URL:-"http://localhost:9000"}
+      - PROMETHEUS_URL1=${PROMETHEUS_URL1:-"http://localhost:9090"}
+      - PROMETHEUS_URL2=${PROMETHEUS_URL2:-"http://localhost:9091"}
       - PROMETHEUS_DATASOURCE_TIME_INTERVAL=${PROMETHEUS_DATASOURCE_TIME_INTERVAL:-"1s"}
     volumes:
       - grafana_data:/var/lib/grafana

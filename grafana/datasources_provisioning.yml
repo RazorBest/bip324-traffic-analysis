@@ -4,11 +4,22 @@ apiVersion: 1
 prune: true
 
 datasources:
-  - name: DS_PROMETHEUS
+  - name: Prometheus1
     type: prometheus
     access: proxy
-    url: $PROMETHEUS_URL # Example: http://localhost:9090
+    url: $PROMETHEUS_URL1 # Example: http://localhost:9090
     uid: NVBfKB1kmkHJd5ZRCRHYZtGQ
+    jsonData:
+      httpMethod: POST
+      cacheLevel: 'Low'
+      timeInterval: $PROMETHEUS_DATASOURCE_TIME_INTERVAL # Example: 15s
+      incrementalQueryOverlapWindow: 10m
+
+  - name: Prometheus2
+    type: prometheus
+    access: proxy
+    url: $PROMETHEUS_URL2 # Example: http://localhost:9090
+    uid: w5qDTuWkFp5m9ysGKtCnZQEa
     jsonData:
       httpMethod: POST
       cacheLevel: 'Low'

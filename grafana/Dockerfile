@@ -16,7 +16,8 @@ ENV GF_SECURITY_DISABLE_GRAVATAR=true
 ENV GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboard_imports/public_dashboards.json
 
 # Env variables used in datasources_provisioning.yml
-ENV PROMETHEUS_URL=${PROMETHEUS_URL:-"http://localhost:9090"}
+ENV PROMETHEUS_URL1=${PROMETHEUS_URL1:-"http://localhost:9090"}
+ENV PROMETHEUS_URL2=${PROMETHEUS_URL2:-"http://localhost:9091"}
 ENV PROMETHEUS_DATASOURCE_TIME_INTERVAL=${PROMETHEUS_DATASOURCE_TIME_INTERVAL:-"1s"}
 
 # The path is present in dashboards_provisioning.yml
