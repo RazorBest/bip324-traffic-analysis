@@ -70,8 +70,21 @@ This repo contains two docker compose configurations.
 - Pcap Publisher: uploads periodically to github, the exact same file served by the PCAP Exporter's webserver.
 - Prometheus: Periodically queries the Pcap Exporter webserver and stores the metrics
 
-Currently, the publisher uploads the repository every 5 minutes: https://github.com/lutmis/pcap-sensor-prom-epicurus.
-This can be plugged to your own Prometheus instance, if you want to collect the data.
+Currently, there are two running nodes:
+| Name | Properties | Region |
+| --- | --- | --- |
+| Epicurus | bitcoin-core:v28.1.0; prune=5000; server=1; v2transport=0 | EU |
+| Polybius | bitcoin-core:v28.1.0; prune=5000; server=1; v2transport=1 | EU |
+
+Epicurus doesn't support v2transport. So hopefully, all the communication is not encrypted.
+On the other hand, Polybius supports v2transport. This, however, doesn't necessarily
+mean that all the packets are encrypted, since it depends whether the other peer supports v2transport.
+
+Currently, the publisher updates the repositories every 5 minutes:
+- https://github.com/lutmis/pcap-sensor-prom-epicurus.
+- https://github.com/lutmis/pcap-sensor-prom-polybius
+
+These repositories can be plugged to your own Prometheus instance, if you want to collect the data.
 The interval was deribelately set to 5 minutes, to add a little be of anonimity to the node.
 Moreover, the IPs and ports were masked. The measurements are still separated by connections.
 The host's IP was explicitly mapped to `1.1.1.1`.
