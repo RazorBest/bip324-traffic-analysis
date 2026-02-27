@@ -161,6 +161,263 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "barWidthFactor": 0.5,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bitcoin_block_info"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "max",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Inbound connection rate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outbound connection rate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "NVBfKB1kmkHJd5ZRCRHYZtGQ"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(ntm_bytes{node=\"epicurus\",src_ip=\"1.1.1.1\",src_port=\"9101\"}[2m])) or sum(rate(ntm_bytes{node=\"epicurus\",dst_ip=\"1.1.1.1\",dst_port=\"9101\"}[2m]))",
+          "legendFormat": "Inbound connection rate",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "NVBfKB1kmkHJd5ZRCRHYZtGQ"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(ntm_bytes{node=\"epicurus\",src_ip=\"1.1.1.1\",src_port!=\"9101\"}[2m])) or sum(rate(ntm_bytes{node=\"epicurus\",dst_ip=\"1.1.1.1\",dst_port!=\"9101\"}[2m]))",
+          "instant": false,
+          "legendFormat": "Outbound connection rate",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "NVBfKB1kmkHJd5ZRCRHYZtGQ"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "bitcoin_block_info{}",
+          "instant": false,
+          "legendFormat": "MIned block",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Epicurus Inbound and Outbound Rates",
+      "transformations": [
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "labelsToFields",
+          "options": {}
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "limit",
+          "options": {
+            "limitField": "1"
+          }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "dateFormat": "X",
+                "destinationType": "time",
+                "targetField": "timestamp"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "bitcoin_block_info",
+                "__name__",
+                "height",
+                "instance",
+                "job",
+                "timestamp"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "w5qDTuWkFp5m9ysGKtCnZQEa"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -204,17 +461,17 @@
               }
             ]
           },
-          "unit": "bps"
+          "unit": "bytes"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 0
+        "x": 0,
+        "y": 8
       },
-      "id": 2,
+      "id": 3,
       "options": {
         "legend": {
           "calcs": [],
@@ -231,30 +488,297 @@
       "pluginVersion": "12.4.0",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "sum(rate(ntm_bytes{node=\"epicurus\",src_ip=\"1.1.1.1\",src_port=\"9101\"}[2m])) or sum(rate(ntm_bytes{node=\"epicurus\",dst_ip=\"1.1.1.1\",dst_port=\"9101\"}[2m]))",
-          "legendFormat": "Inbound connection rate",
-          "range": true,
-          "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "NVBfKB1kmkHJd5ZRCRHYZtGQ"
-          }
+            "uid": "w5qDTuWkFp5m9ysGKtCnZQEa"
+          },
+          "editorMode": "code",
+          "expr": "sum(ntm_bytes{node=\"polybius\",src_ip=\"1.1.1.1\",src_port=\"6699\"} or ntm_bytes{node=\"polybius\",dst_ip=\"1.1.1.1\",dst_port=\"6699\"})",
+          "interval": "",
+          "legendFormat": "Inbound connection data",
+          "range": true,
+          "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "NVBfKB1kmkHJd5ZRCRHYZtGQ"
+            "uid": "w5qDTuWkFp5m9ysGKtCnZQEa"
           },
           "editorMode": "code",
-          "expr": "sum(rate(ntm_bytes{node=\"epicurus\",src_ip=\"1.1.1.1\",src_port!=\"9101\"}[2m])) or sum(rate(ntm_bytes{node=\"epicurus\",dst_ip=\"1.1.1.1\",dst_port!=\"9101\"}[2m]))",
+          "expr": "sum(ntm_bytes{node=\"polybius\",src_ip=\"1.1.1.1\",src_port!=\"6699\"} or ntm_bytes{node=\"epicurus\",dst_ip=\"1.1.1.1\",dst_port!=\"6699\"})",
           "instant": false,
-          "legendFormat": "Outbound connection rate",
+          "interval": "",
+          "legendFormat": "Outbound connection data",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "Epicurus Inbound and Outbound Rates",
+      "title": "Polybius Total Inbound and Outbound Data",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "w5qDTuWkFp5m9ysGKtCnZQEa"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "barWidthFactor": 0.5,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bitcoin_block_info"
+            },
+            "properties": [
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "left"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "max",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Inbound connection rate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outbound connection rate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "w5qDTuWkFp5m9ysGKtCnZQEa"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(ntm_bytes{node=\"polybius\",src_ip=\"1.1.1.1\",src_port=\"6699\"}[2m])) or sum(rate(ntm_bytes{node=\"polybius\",dst_ip=\"1.1.1.1\",dst_port=\"6699\"}[2m]))",
+          "legendFormat": "Inbound connection rate",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "w5qDTuWkFp5m9ysGKtCnZQEa"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(ntm_bytes{node=\"polybius\",src_ip=\"1.1.1.1\",src_port!=\"6699\"}[2m])) or sum(rate(ntm_bytes{node=\"polybius\",dst_ip=\"1.1.1.1\",dst_port!=\"6699\"}[2m]))",
+          "instant": false,
+          "legendFormat": "Outbound connection rate",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "w5qDTuWkFp5m9ysGKtCnZQEa"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "bitcoin_block_info{}",
+          "format": "time_series",
+          "instant": false,
+          "legendFormat": "Mined block",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Polybius Inbound and Outbound Rates",
+      "transformations": [
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "labelsToFields",
+          "options": {
+            "keepLabels": [
+              "height",
+              "instance",
+              "job",
+              "timestamp"
+            ]
+          }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "limit",
+          "options": {
+            "limitField": "1"
+          }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "dateFormat": "X",
+                "destinationType": "time",
+                "targetField": "timestamp"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "/^(?:C)$/"
+          },
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "bitcoin_block_info",
+                "__name__",
+                "height",
+                "instance",
+                "job",
+                "timestamp"
+              ]
+            }
+          }
+        }
+      ],
       "type": "timeseries"
     }
   ],
@@ -265,13 +789,13 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-2h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Epicurus Dashboards",
-  "uid": "ad2khnp",
-  "version": 13,
+  "title": "Bitcoin Node Dashboards",
+  "uid": "adk2tgd",
+  "version": 1,
   "weekStart": ""
 }
