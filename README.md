@@ -23,10 +23,10 @@ Copy the `/example_env_file` into `/.env`, and change the environment variables:
 | --- | --- |
 | `HOST_IP` | The IP of the interface that is monitored by Pcap exporter. This is the IP that you get by running `ip a s`, and looking at the correct interface (e.g. eth0). |
 | `NODE_LABEL` | A name that is used to differentiate Prometheus metrics. It's useful when you deploy this project on multiple machines, each one running a different Bitcoin node. |
-| `PUBLISH_SECRET_KEY_FILE` | An absolute path to the secret key used for publishing on gihthub |
-| `PUBLISH_METRICS_REPO` | The repository on which metrics are published by Pcap Publisher |
-| `GITNAME` | The `git config user.name` used by Pcap Publisher |
-| `GITEMAIL` | The `git config user.email` used by Pcap Publisher |
+| `PUBLISH_SECRET_KEY_FILE` | An absolute path to the secret key used for publishing on GitHub. |
+| `PUBLISH_METRICS_REPO` | The repository on which metrics are published by Pcap Publisher. |
+| `GITNAME` | The `git config user.name` used by Pcap Publisher. |
+| `GITEMAIL` | The `git config user.email` used by Pcap Publisher. |
 
 Finally, run
 ```sh
@@ -39,11 +39,13 @@ dashboard is available at `127.0.0.1:9090`.
 ### Installing the Grafana containers
 
 Copy the `/grafana/example_env_file` into `/grafana/.env`, and change the environment variables:
-- `GF_SECURITY_ADMIN_PASSWORD`: The admin password of the Grafana dashboard. MAKE SURE YOU REPLACE THE DEFAULT.
-- `GF_SERVER_ROOT_URL`: The URL that is used to expose the app on the internet. If you don't need this, it can be any URL.
-- `CADDY_PUBLIC_DOMAIN`: The URL domain, used by Caddy to set up the TLS certificate.
-- `PROMETHEUS_URL`: The URL of the Prometheus instance, which must be accessible by Grafana's container.
-- `PROMETHEUS_DATASOURCE_TIME_INTERVAL`: The time interval granularity which Grafana should query Prometheus for. It makes sense to be at least as big as the `scrape_interval` option in prometheus.yml.
+| Variable | Description |
+| --- | --- |
+| `GF_SECURITY_ADMIN_PASSWORD` | The admin password of the Grafana dashboard. MAKE SURE YOU REPLACE THE DEFAULT. |
+| `GF_SERVER_ROOT_URL` | The URL that is used to expose the app on the internet. If you don't need this, it can be any URL. |
+| `CADDY_PUBLIC_DOMAIN` | The URL domain, used by Caddy to set up the TLS certificate. |
+| `PROMETHEUS_URL` | The URL of the Prometheus instance, which must be accessible by Grafana's container. |
+| `PROMETHEUS_DATASOURCE_TIME_INTERVAL` | The time interval granularity which Grafana should query Prometheus for. It makes sense to be at least as big as the `scrape_interval` option in prometheus.yml. |
 
 Finally, run
 ```sh
