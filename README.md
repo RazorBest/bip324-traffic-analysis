@@ -89,16 +89,19 @@ The interval was deribelately set to 5 minutes, to add a little be of anonimity 
 Moreover, the IPs and ports were masked. The measurements are still separated by connections.
 The host's IP was explicitly mapped to `1.1.1.1`.
 
+---
+
 **The Grafana capture infrastructure:**
-- Configuration stored in grafana/grafana-compose.yml
+- Configuration stored in `grafana/grafana-compose.yml`
 - Grafana: it can connect to the Prometheus instance mentioned earlier.
 - Caddy: reverse proxy configured to make the Grafana instance accessible from the internet
 
 This Grafana instance was configured with an anonymous user that has access to
 some already existing dashboards. It's the developer's job to specify the
 correct Prometheus URL, and ensure that the containers can communicate with each
-other. My setup runs Prometheus on one machine, and Grafana on a different machine,
-where the communication happens through a VPN.
+other. So, you will probably need to change `compose.yml` to expose the port
+of the Prometheus instance. This project runs Prometheus on one machine, and
+Grafana on a different machine, where the communication happens through a VPN.
 
 ## Scope
 
