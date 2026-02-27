@@ -19,12 +19,14 @@ that the `command` from `pcap_exporter` service in `compose.yml` matches your
 node's network parameters.
 
 Copy the `/example_env_file` into `/.env`, and change the environment variables:
-- `HOST_IP`: The IP of the interface that is monitored by Pcap exporter. This is the IP that you get by running `ip a s`, and looking at the correct interface (e.g. eth0).
-- `NODE_LABEL`: A name that is used to differentiate Prometheus metrics. It's useful when you deploy this project on multiple machines, each one running a different Bitcoin node.
-- `PUBLISH_SECRET_KEY_FILE`: Aan absolute path to the secret key used for publishing on gihthub
-- `PUBLISH_METRICS_REPO`: The repository on which metrics are published by Pcap Publisher.
-- `GITNAME`: The `git config user.name` used by Pcap Publisher.
-- `GITEMAIL`: The `git config user.email` used by Pcap Publisher.
+| Variable | Description |
+| --- | --- |
+| `HOST_IP` | The IP of the interface that is monitored by Pcap exporter. This is the IP that you get by running `ip a s`, and looking at the correct interface (e.g. eth0). |
+| `NODE_LABEL` | A name that is used to differentiate Prometheus metrics. It's useful when you deploy this project on multiple machines, each one running a different Bitcoin node. |
+| `PUBLISH_SECRET_KEY_FILE` | An absolute path to the secret key used for publishing on gihthub |
+| `PUBLISH_METRICS_REPO` | The repository on which metrics are published by Pcap Publisher |
+| `GITNAME` | The `git config user.name` used by Pcap Publisher |
+| `GITEMAIL` | The `git config user.email` used by Pcap Publisher |
 
 Finally, run
 ```sh
