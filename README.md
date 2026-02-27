@@ -4,7 +4,7 @@
 
 This project consists of:
 - This current repo
-- (Pcap exporter)[https://github.com/RazorBest/pcap_exporter], which was specifically made for this project
+- [Pcap exporter](https://github.com/RazorBest/pcap_exporter), which was specifically made for this project
 
 ## Installation
 
