@@ -1,5 +1,9 @@
 # Traffic analysis of post-BIP324 P2P Bitcoin traffic
 
+<p align="center">
+<img width="318" height="134" alt="correlation" src="https://github.com/user-attachments/assets/b6aa22fb-1389-4dfe-9fa7-f881d58fe127" />
+</p>
+
 ## Project Layout
 
 This project consists of:
