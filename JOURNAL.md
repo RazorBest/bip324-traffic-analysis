@@ -43,27 +43,26 @@ I created 2 bitcoin-core nodes: one with encryption (Polybius), and one without 
 **Anonymization**: For the public data, the (IP, port) pairs were replaced with other random (IP, port) pairs. This is to discourage other people discovering my node's IP and altering the traffic measurements.
 
 **Birds eye view**: For each node, I created a Grafana dashboard that tracks:
-- Total inbound traffic bytes
-- Total outbound traffic bytes
-- Inbound bandwidth in bytes/s
-- Outbound bandwidth in bytes/s
+- Total outbound+inbound traffic bytes
+- Outbound+Inbound bandwidth in bytes/s
 
-Finally, I plotted the block mining times, since one assumption was that when a block gets mined, more traffic gets generated.
+Finally, I plotted the block mining times.
 
-By looking at the dashboards, the following observations can be made:
+Just by looking at the dashboards, the following observations can be made:
 - The inbound traffic is higher than the outbound one
 - Spikes in the inbound traffic are very proeminent (usually, there's an x2.5 increase)
 - The outbound traffic doesn't have observable spikes
 - There isn't a definitive correlation between the mined block timestamp and the spikes in the inbound traffic
 
-The inbound traffic is higher because we're running a listening node. This is a cause of the simple fact that we have more peers that started a connection to us.
+The inbound traffic is higher because we're running a listening node. This is a cause of the simple fact that we have more peers that connected to us.
 
 We don't know why the outbound traffic is less eventful. My hyptothesis is that, since the outbound traffic represents connections to other listenting nodes, you don't need to pass inv messages to all of them. Whereas, for the inbound nodes, there is a high probability that they're non-listening, and my node acts as an "edge node" that sends all the needed blockchain data.
 
-Finally, one reason the traffic doesn't correlate strongly with the timestamp of the mined blocks might have multiple reasons:
-- We fetch data every 10 seconds from a public API, so it might happen that we fetch stale blocks
-- The timestamp is chosen by the miner, and doesn't reflect the exact time the block was relayed to the other nodes.
+The traffic not correlating strongly with the timestamp of the mined blocks might have multiple reasons:
+- We fetch data every 10 seconds from a public API, so it might happen that we fetch future stale blocks
+- The timestamp is chosen by the miner, and doesn't reflect the exact time the block was relayed to the other nodes
 - Some blocks have a small number of transactions, so the node needs to do less fetches
+- Other types of events are happening on the network
 
 **Plan:**
 
@@ -77,8 +76,10 @@ I will choose the first method, and use [libnetfilter_queue](https://www.netfilt
 
 The data analysis part will be done in Python.
 
+I'll see if there's a way for making the pcap files public, without doxxing my node.
+
 Next steps are:
-- Intercep traffic
+- Intercept traffic
 - Perform MitM and decrypt the BIP-324 packets
 - Identify important types of messages
 - Determine when a new block is mined, based on the messages
