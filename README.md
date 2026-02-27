@@ -4,13 +4,15 @@
 
 This project consists of:
 - This current repo
-- (Pcap exporter)[https://github.com/RazorBest/pcap_exporter], which was specifically made for this project
+- [Pcap exporter](https://github.com/RazorBest/pcap_exporter), which was specifically made for this project
 
 ## Installation
 
 ### Prerequisites
 - Docker: https://docs.docker.com/engine/install/
 - Bitcoin-core: https://bitcoin.org/en/bitcoin-core/
+
+You can also check [the node setup](/setup_node.md) commands that were used for this project.
 
 ### Installing the traffic capture containers
 
@@ -19,12 +21,14 @@ that the `command` from `pcap_exporter` service in `compose.yml` matches your
 node's network parameters.
 
 Copy the `/example_env_file` into `/.env`, and change the environment variables:
-- `HOST_IP`: The IP of the interface that is monitored by Pcap exporter. This is the IP that you get by running `ip a s`, and looking at the correct interface (e.g. eth0).
-- `NODE_LABEL`: A name that is used to differentiate Prometheus metrics. It's useful when you deploy this project on multiple machines, each one running a different Bitcoin node.
-- `PUBLISH_SECRET_KEY_FILE`: Aan absolute path to the secret key used for publishing on gihthub
-- `PUBLISH_METRICS_REPO`: The repository on which metrics are published by Pcap Publisher.
-- `GITNAME`: The `git config user.name` used by Pcap Publisher.
-- `GITEMAIL`: The `git config user.email` used by Pcap Publisher.
+| Variable | Description |
+| --- | --- |
+| `HOST_IP` | The IP of the interface that is monitored by Pcap exporter. This is the IP that you get by running `ip a s`, and looking at the correct interface (e.g. eth0). |
+| `NODE_LABEL` | A name that is used to differentiate Prometheus metrics. It's useful when you deploy this project on multiple machines, each one running a different Bitcoin node. |
+| `PUBLISH_SECRET_KEY_FILE` | An absolute path to the secret key used for publishing on GitHub. |
+| `PUBLISH_METRICS_REPO` | The repository on which metrics are published by Pcap Publisher. |
+| `GITNAME` | The `git config user.name` used by Pcap Publisher. |
+| `GITEMAIL` | The `git config user.email` used by Pcap Publisher. |
 
 Finally, run
 ```sh
@@ -37,11 +41,13 @@ dashboard is available at `127.0.0.1:9090`.
 ### Installing the Grafana containers
 
 Copy the `/grafana/example_env_file` into `/grafana/.env`, and change the environment variables:
-- `GF_SECURITY_ADMIN_PASSWORD`: The admin password of the Grafana dashboard. MAKE SURE YOU REPLACE THE DEFAULT.
-- `GF_SERVER_ROOT_URL`: The URL that is used to expose the app on the internet. If you don't need this, it can be any URL.
-- `CADDY_PUBLIC_DOMAIN`: The URL domain, used by Caddy to set up the TLS certificate.
-- `PROMETHEUS_URL`: The URL of the Prometheus instance, which must be accessible by Grafana's container.
-- `PROMETHEUS_DATASOURCE_TIME_INTERVAL`: The time interval granularity which Grafana should query Prometheus for. It makes sense to be at least as big as the `scrape_interval` option in prometheus.yml.
+| Variable | Description |
+| --- | --- |
+| `GF_SECURITY_ADMIN_PASSWORD` | The admin password of the Grafana dashboard. MAKE SURE YOU REPLACE THE DEFAULT. |
+| `GF_SERVER_ROOT_URL` | The URL that is used to expose the app on the internet. If you don't need this, it can be any URL. |
+| `CADDY_PUBLIC_DOMAIN` | The URL domain, used by Caddy to set up the TLS certificate. |
+| `PROMETHEUS_URL` | The URL of the Prometheus instance, which must be accessible by Grafana's container. |
+| `PROMETHEUS_DATASOURCE_TIME_INTERVAL` | The time interval granularity which Grafana should query Prometheus for. It makes sense to be at least as big as the `scrape_interval` option in prometheus.yml. |
 
 Finally, run
 ```sh
@@ -64,22 +70,38 @@ This repo contains two docker compose configurations.
 - Pcap Publisher: uploads periodically to github, the exact same file served by the PCAP Exporter's webserver.
 - Prometheus: Periodically queries the Pcap Exporter webserver and stores the metrics
 
-Currently, the publisher uploads the repository every 5 minutes: https://github.com/lutmis/pcap-sensor-prom-epicurus.
-This can be plugged to your own Prometheus instance, if you want to collect the data.
+Currently, there are two running nodes:
+| Name | Properties | Region |
+| --- | --- | --- |
+| Epicurus | bitcoin-core:v28.1.0; prune=5000; server=1; v2transport=0 | EU |
+| Polybius | bitcoin-core:v28.1.0; prune=5000; server=1; v2transport=1 | EU |
+
+Epicurus doesn't support v2transport. So hopefully, all the communication is not encrypted.
+On the other hand, Polybius supports v2transport. This, however, doesn't necessarily
+mean that all the packets are encrypted, since it depends whether the other peer supports v2transport.
+
+Currently, the publisher updates the repositories every 5 minutes:
+- https://github.com/lutmis/pcap-sensor-prom-epicurus.
+- https://github.com/lutmis/pcap-sensor-prom-polybius
+
+These repositories can be plugged to your own Prometheus instance, if you want to collect the data.
 The interval was deribelately set to 5 minutes, to add a little be of anonimity to the node.
 Moreover, the IPs and ports were masked. The measurements are still separated by connections.
 The host's IP was explicitly mapped to `1.1.1.1`.
 
+---
+
 **The Grafana capture infrastructure:**
-- Configuration stored in grafana/grafana-compose.yml
+- Configuration stored in `grafana/grafana-compose.yml`
 - Grafana: it can connect to the Prometheus instance mentioned earlier.
 - Caddy: reverse proxy configured to make the Grafana instance accessible from the internet
 
 This Grafana instance was configured with an anonymous user that has access to
 some already existing dashboards. It's the developer's job to specify the
 correct Prometheus URL, and ensure that the containers can communicate with each
-other. My setup runs Prometheus on one machine, and Grafana on a different machine,
-where the communication happens through a VPN.
+other. So, you will probably need to change `compose.yml` to expose the port
+of the Prometheus instance. This project runs Prometheus on one machine, and
+Grafana on a different machine, where the communication happens through a VPN.
 
 ## Scope
 
@@ -224,7 +246,6 @@ rpcallowip=127.0.0.1
 # Forces your node to accept rpc commands
 server=1
 
-
 [main]
 ```
 
@@ -307,10 +328,49 @@ Rust has a wrapper for libpcap called `pcap`, which is pretty to use. My Rust CL
 does something similar to what network-traffic-metrics is doing, but also:
 - Registers a source and destination ports as metric labels
 - Lets the user add custom labels with constant values, for differentiating sensors.
-- Masks (IP, port) pairs for an increase in anonymity. An `(IP, port)` pair will be mapped to the same `(IP', port')` pair between runs, as long as the same seed stored in its data directory is used.
+- Masks port or (IP, port) pairs for an increase in anonymity. An `(IP, port)` pair will be mapped to the same `(IP', port')` pair between runs, as long as the same seed stored in its data directory is used.
 
-Fun fact: The masking is done using "Format Preserving Encryption", which still has some unsolved issues.
-The classic solution uses cycle walking. However, I chose to use AES-CTS mode for formats that
-are of size above 128 bits. This gives you a bijection that preserves the length, but
-lacks the avalanche effect, i.e. if you change a bit in a place, this won't always affect all the bits.
-But, if you just apply CTS multiple times, you can increase the diffusion.
+### Anonymization
+
+I wanted to make the measurements public. However, I didn't want the IP of my nodes to be public,
+since this creates the risk of a bias, from someone that discovers that the nodes
+are used to gather data about the network traffic.
+
+I arrived to a solution that is not secure, but it does the job, assuming the small
+scale of this project: masking. So, in the public metrics, I replaced all the (IP, port)
+pairs with a different (IP, port) pair. Morover, I want this mapping to be deterministic
+and saved between runs. So, if I map (127.0.0.1, 80) to (1.2.240.3, 10458) the first time,
+the next time, that pair should be mapped to the same value. And, even if I restart
+the Pcap Exporter, the mapping should preserved. This problem can generally be solved
+by randomly choosing a unique value, and then storing that mapping on the disk. This scales
+with the number of (IP, port) pairs that the exporter has ever seen. The alternative
+to this is to use a random bijective function.
+
+The term used in cryptography is Pseudo Random Permutation (PRP), and it refers to
+an algorithm that generates pseurandom bijective functions same domain as the input.
+However, we don't want to construct this algorithm from scratch. We want to use
+existing block ciphers, which are generators of PRPs. The issue is that block
+cipher usually have a predefined input size. This particular problem is solved
+by algorithms called Format Preserving Encryption. If you don't need something
+very serious (which was my case), (Ciphers with Arbitrary Finite Domains, by Black & Rogaway)[https://www.cs.ucdavis.edu/~rogaway/papers/subset.pdf]
+is a very good paper that gives an overview on how to implement a Format
+Preserving Encryption.
+
+For masking (IPv6, port), you need a 144-bit Format Preserving Encryption. But
+the AES block cipher works on 128 bits. To solve this, I used a trick that is
+not presented in the paper, but it's similar to their last construction.  
+AES-CTS (Ciphertext stealing, defined in NIST SP 800-38A) turns AES into a
+bijective cipher that maps N bits to N bits, assuming N >= 128. So, AES-CTS is
+a bijection. But not a random permutation, since a change in one of the input
+bits doesn't always propagate to all the output bits - this is called diffusion.
+
+But, just in Black & Rogaway's paper, you can make a construction that uses
+more rounds, to add diffusion. My solution performs AES-CTS 10 times, which is
+a downgrade from Black & Rogway's Feistel scheme with layers that mix the
+sub-blocks. But it does the job, and it's easy to implement.
+
+For masking (IPv4, port), you only need 48 bits, which can be done with a
+lightweight block cipher. I used [Speck](https://eprint.iacr.org/2013/404) to solve that.
+
+For masking just ports, it's easier to just hold the mapping in memory, in
+an array of 65536 elements, each of size of 2 bytes.
