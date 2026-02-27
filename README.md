@@ -12,6 +12,8 @@ This project consists of:
 - Docker: https://docs.docker.com/engine/install/
 - Bitcoin-core: https://bitcoin.org/en/bitcoin-core/
 
+You can also check [the node setup](/setup_node.md) commands that were used for this project.
+
 ### Installing the traffic capture containers
 
 It is expected that you have a running bitcoin node on mainnet. Check
@@ -227,7 +229,6 @@ prune=5000
 rpcallowip=127.0.0.1
 # Forces your node to accept rpc commands
 server=1
-
 
 [main]
 ```
