@@ -328,10 +328,49 @@ Rust has a wrapper for libpcap called `pcap`, which is pretty to use. My Rust CL
 does something similar to what network-traffic-metrics is doing, but also:
 - Registers a source and destination ports as metric labels
 - Lets the user add custom labels with constant values, for differentiating sensors.
-- Masks (IP, port) pairs for an increase in anonymity. An `(IP, port)` pair will be mapped to the same `(IP', port')` pair between runs, as long as the same seed stored in its data directory is used.
+- Masks port or (IP, port) pairs for an increase in anonymity. An `(IP, port)` pair will be mapped to the same `(IP', port')` pair between runs, as long as the same seed stored in its data directory is used.
 
-Fun fact: The masking is done using "Format Preserving Encryption", which still has some unsolved issues.
-The classic solution uses cycle walking. However, I chose to use AES-CTS mode for formats that
-are of size above 128 bits. This gives you a bijection that preserves the length, but
-lacks the avalanche effect, i.e. if you change a bit in a place, this won't always affect all the bits.
-But, if you just apply CTS multiple times, you can increase the diffusion.
+### Anonymization
+
+I wanted to make the measurements public. However, I didn't want the IP of my nodes to be public,
+since this creates the risk of a bias, from someone that discovers that the nodes
+are used to gather data about the network traffic.
+
+I arrived to a solution that is not secure, but it does the job, assuming the small
+scale of this project: masking. So, in the public metrics, I replaced all the (IP, port)
+pairs with a different (IP, port) pair. Morover, I want this mapping to be deterministic
+and saved between runs. So, if I map (127.0.0.1, 80) to (1.2.240.3, 10458) the first time,
+the next time, that pair should be mapped to the same value. And, even if I restart
+the Pcap Exporter, the mapping should preserved. This problem can generally be solved
+by randomly choosing a unique value, and then storing that mapping on the disk. This scales
+with the number of (IP, port) pairs that the exporter has ever seen. The alternative
+to this is to use a random bijective function.
+
+The term used in cryptography is Pseudo Random Permutation (PRP), and it refers to
+an algorithm that generates pseurandom bijective functions same domain as the input.
+However, we don't want to construct this algorithm from scratch. We want to use
+existing block ciphers, which are generators of PRPs. The issue is that block
+cipher usually have a predefined input size. This particular problem is solved
+by algorithms called Format Preserving Encryption. If you don't need something
+very serious (which was my case), (Ciphers with Arbitrary Finite Domains, by Black & Rogaway)[https://www.cs.ucdavis.edu/~rogaway/papers/subset.pdf]
+is a very good paper that gives an overview on how to implement a Format
+Preserving Encryption.
+
+For masking (IPv6, port), you need a 144-bit Format Preserving Encryption. But
+the AES block cipher works on 128 bits. To solve this, I used a trick that is
+not presented in the paper, but it's similar to their last construction.  
+AES-CTS (Ciphertext stealing, defined in NIST SP 800-38A) turns AES into a
+bijective cipher that maps N bits to N bits, assuming N >= 128. So, AES-CTS is
+a bijection. But not a random permutation, since a change in one of the input
+bits doesn't always propagate to all the output bits - this is called diffusion.
+
+But, just in Black & Rogaway's paper, you can make a construction that uses
+more rounds, to add diffusion. My solution performs AES-CTS 10 times, which is
+a downgrade from Black & Rogway's Feistel scheme with layers that mix the
+sub-blocks. But it does the job, and it's easy to implement.
+
+For masking (IPv4, port), you only need 48 bits, which can be done with a
+lightweight block cipher. I used [Speck](https://eprint.iacr.org/2013/404) to solve that.
+
+For masking just ports, it's easier to just hold the mapping in memory, in
+an array of 65536 elements, each of size of 2 bytes.
