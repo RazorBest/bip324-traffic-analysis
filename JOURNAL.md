@@ -93,6 +93,7 @@ Next steps are:
 
 I first went with the well-established [libnetfilter_queue](https://www.netfilter.org/projects/libnetfilter_queue/index.html) for Linux, which is an API over `nfnetlink_queue` subsystem.
 Since I'm writing the packet interceptor in Rust, I looked for a wrapper crate, and found it: https://github.com/chifflier/nfqueue-rs.
-Unfortunately, after some hours of experimenting with the crate, I found that it has some bugs, and it's unusable in its state.
+Unfortunately, after some hours of experimenting with the crate, I found that it has some bugs, and it's unusable in its current state.
+
 I eventually found another crate that doesn't wrap `libnetfilter_queue`, and communicates with the NETLINK sockets directly: https://github.com/nbdd0121/nfq-rs.
 After experimenting with this second crate, I decided to use it for the `pcap_exporter` utility.
