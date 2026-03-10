@@ -9,6 +9,7 @@
 This project consists of:
 - This current repo
 - [Pcap exporter](https://github.com/RazorBest/pcap_exporter), which was specifically made for this project
+- [BIP324 MITM](https://github.com/RazorBest/bip324-mitm)
 
 ## Installation
 
