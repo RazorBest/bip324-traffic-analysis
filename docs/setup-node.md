@@ -99,3 +99,8 @@ Example output:
   ]
 }
 ```
+
+Depending on how much space you have available on the disk, you might increase
+the prune variable (or remove it at all). If you want to setup an archival node,
+and need some numbers, you can check: https://publicnode.com/snapshots. Last time
+I checked, you needed 700GB of disk.
