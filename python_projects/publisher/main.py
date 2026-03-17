@@ -25,8 +25,7 @@ def publish_service(metrics_url: str, github_url: str, path_secret_key: str, git
             subprocess.run(["git", "commit", "-m", '"update index.html"'], check=True) 
 
             subshell_command = f"ssh-add '{path_secret_key}'; git push origin"
-            # TODO: remove comment
-            # subprocess.run(["ssh-agent", "bash", "-c", subshell_command], env=env) 
+            subprocess.run(["ssh-agent", "bash", "-c", subshell_command], env=env) 
         else:
             print(f"Request error: {r}")
 
