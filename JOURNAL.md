@@ -97,3 +97,21 @@ Unfortunately, after some hours of experimenting with the crate, I found that it
 
 I eventually found another crate that doesn't wrap `libnetfilter_queue`, and communicates with the NETLINK sockets directly: https://github.com/nbdd0121/nfq-rs.
 After experimenting with this second crate, I decided to use it for the `pcap_exporter` utility.
+
+
+## 17.03.2026 (BIP-324 MitM)
+
+**Journal:**
+
+One item from the list was finally crossed off: decrypting BIP-324 packets using MitM.
+
+This materialized into a [separate library written in Rust](https://github.com/RazorBest/bip324-mitm).
+
+Initially, I thought I could use [the existing implementation of the protocol, written in Rust](https://github.com/rust-bitcoin/bip324). 
+However, the public API hides most of the handshake logic. My library, however, needed to be able to ingest one byte and "take a break".
+In other words: be non-blocking.
+The existing BIP-324 implementation of the handshake was blocking, so I ended up rewriting the BIP-324 state machine for my MitM use case.
+
+Why do we need a non-blocking protocol layer? Because we do not want to assume how nodes implement the BIP-324 protocol.
+It is possible that the responding node could start sending its first message before the initiating node finishes sending the first message entirely.
+We want our MitM layer to be as transparent as possible: any byte sent by the initiator should be redirected to the server as quickly as possible.
