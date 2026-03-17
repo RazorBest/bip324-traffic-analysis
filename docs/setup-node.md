@@ -58,6 +58,8 @@ rpcallowip=127.0.0.1
 server=1
 
 [main]
+v2transport=1 # Set to 0 if we don't want P2P encryption.
+maxuploadtarget=1024 # Change this if you have a higher bandwidth limit
 ```
 
 From the source, run:
