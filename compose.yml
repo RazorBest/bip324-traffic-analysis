@@ -8,6 +8,8 @@ services:
       - prometheus_volume:/prometheus
     links:
       - python_runners:blockchain-metrics-host
+    command:
+      - "--storage.tsdb.retention.time=5d"
 
   pcap_exporter:
     build: ./pcap_exporter
