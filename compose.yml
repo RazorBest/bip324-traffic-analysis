@@ -10,6 +10,7 @@ services:
       - python_runners:blockchain-metrics-host
     command:
       - "--storage.tsdb.retention.time=5d"
+      - "--config.file=/etc/prometheus/prometheus.yml"
 
   pcap_exporter:
     build: ./pcap_exporter
