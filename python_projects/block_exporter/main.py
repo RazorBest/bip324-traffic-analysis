@@ -41,7 +41,7 @@ class BlockTracker:
         response = requests.get(f"{MEMPOOL_API_URL}/{from_height}")
         try:
             response.raise_for_status()
-        except Exception as exc:
+        except requests.HTTPError as exc:
             print(f"Error: {exc}")
 
         blocks = response.json()

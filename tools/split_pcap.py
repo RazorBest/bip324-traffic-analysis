@@ -53,7 +53,7 @@ class PcapFile():
         packet_header.data = data
 
         return packet_header
-    
+
     def tell(self):
         return self.f.tell() - len(self.buffer)
 
@@ -91,10 +91,10 @@ class PcapPacket():
 
     def to_bytes(self):
         return struct.pack(PCAP_PACKET_HEADER_FORMAT, self.ts_sec, self.ts_usec, self.incl_len, self.orig_len) + self.data
- 
+
     def write(self, file):
         file.write(data := self.to_bytes())
-        return len(data) 
+        return len(data)
 
 
 # ---------- END pcap.py -------------
@@ -248,7 +248,7 @@ def main():
     file.read(offset)
 
     print(file.read(8).hex())
-    
+
     exit(1)
     """
 
