@@ -34,7 +34,7 @@ class PcapFile():
 
     def next_packet_header(self):
         header_data = self._read(PCAP_PACKET_HEADER_LEN)
-        if not len(header_data):
+        if len(header_data) == 0:
             return None
 
         packet_header = PcapPacket(header_data)
@@ -53,7 +53,7 @@ class PcapFile():
         packet_header.data = data
 
         return packet_header
-    
+
     def tell(self):
         return self.f.tell() - len(self.buffer)
 
@@ -70,7 +70,11 @@ class PcapGlobalHeader():
         self.network = unpacked[6]
 
     def write(self, file):
-        data = struct.pack(PCAP_GLOBAL_HEADER_FORMAT, self.magic_number, self.version_major, self.version_minor, self.thiszone, self.sigfigs, self.snaplen, self.network)
+        data = struct.pack(
+            PCAP_GLOBAL_HEADER_FORMAT,
+            self.magic_number, self.version_major, self.version_minor,
+            self.thiszone, self.sigfigs, self.snaplen, self.network
+        )
         file.write(data)
 
         return len(data)
@@ -90,11 +94,13 @@ class PcapPacket():
         return PCAP_PACKET_HEADER_LEN + len(self.data)
 
     def to_bytes(self):
-        return struct.pack(PCAP_PACKET_HEADER_FORMAT, self.ts_sec, self.ts_usec, self.incl_len, self.orig_len) + self.data
- 
+        return struct.pack(PCAP_PACKET_HEADER_FORMAT,
+            self.ts_sec, self.ts_usec, self.incl_len, self.orig_len
+        ) + self.data
+
     def write(self, file):
         file.write(data := self.to_bytes())
-        return len(data) 
+        return len(data)
 
 
 # ---------- END pcap.py -------------
@@ -105,8 +111,12 @@ def parse_args():
     parser.add_argument("--outdir", help="The directory in which to write the output pcap files. If not specified, the directory of the given file is used.")
     parser.add_argument("--reference-mac", action="append", dest="reference_macs", help="MAC address that can be used to identify Ethernet frames in order to recover corrupted PCAP files.")
     parser.add_argument("--chunks", type=int, default=100, help="The number of chunked files to write. If this limit is reached, the program stops without parsing the rest of the input file")
-    parser.add_argument("--fseek", type=int, default=0, help="Offset to start reading the input file. This is applied after the global header is read.")
-    parser.add_argument("--start", type=int, default=0, help="Where to start with the subfile counter")
+    parser.add_argument("--fseek", type=int, default=0,
+        help="Offset to start reading the input file. This is applied after the global header is read."
+    )
+    parser.add_argument("--start", type=int, default=0,
+        help="Where to start with the subfile counter"
+    )
 
     args = parser.parse_args()
 
@@ -248,7 +258,7 @@ def main():
     file.read(offset)
 
     print(file.read(8).hex())
-    
+
     exit(1)
     """
 

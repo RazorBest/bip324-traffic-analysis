@@ -39,7 +39,10 @@ class BlockTracker:
         """
         from_height = from_height if from_height is not None else ""
         response = requests.get(f"{MEMPOOL_API_URL}/{from_height}")
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as exc:
+            print(f"Error: {exc}")
 
         blocks = response.json()
 
