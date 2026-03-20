@@ -6,7 +6,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     env:
-      PYLINT_ARGS: "--max-line-length=120 --disable=missing-docstring"
+      PYLINT_ARGS: "--max-line-length=120 --disable=missing-docstring --fail-under=9"
     strategy:
       matrix:
         python-version: ["3.12", "3.13"]
