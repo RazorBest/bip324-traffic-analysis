@@ -25,7 +25,7 @@ jobs:
         find . -name "pyproject.toml" -not -path "./.git/*" | while read toml; do
           dir=$(dirname "${toml}")
           echo "::group::Installing dependecies and linting directories"
-          pip instsall "${dir}"
+          pip install "${dir}"
           find "${dir}" --name "*.py" -print0 | xargs -0 --no-run-if-empty \
             pylint $PYLINT_ARGS
           echo "::endgroup::"
