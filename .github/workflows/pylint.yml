@@ -9,7 +9,7 @@ jobs:
       PYLINT_ARGS: "--max-line-length=120 --disable=missing-docstring"
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.12", "3.13"]
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -22,7 +22,7 @@ jobs:
         pip install pylint
     - name: Lint project directories with dependencies
       run: |
-        find . -name "pyproject.toml" -not -path "./.git/*" | while read toml; do
+        find . -name pyproject.toml -not -path "./.git/*" | while read toml; do
           dir=$(dirname "${toml}")
           echo "::group::Installing dependecies and linting directories"
           pip install "${dir}"
