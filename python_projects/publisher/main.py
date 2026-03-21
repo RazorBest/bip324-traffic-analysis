@@ -1,5 +1,6 @@
 #!/bin/python
 
+import logging
 import os
 import subprocess
 import sys
@@ -7,7 +8,8 @@ import time
 
 import requests
 
-def publish_service(metrics_url: str, github_url: str, path_secret_key: str, gitname: str, gitemail):
+
+def publish_service(metrics_url: str, github_url: str, path_secret_key: str, gitname: str, gitemail: str):
     env = {"GIT_SSH_COMMAND": "ssh -o StrictHostKeyChecking=no"}
     subshell_command = f"ssh-add '{path_secret_key}'; git clone '{github_url}' project"
     subprocess.run(["ssh-agent", "bash", "-c", subshell_command], env=env, check=True)
@@ -19,14 +21,19 @@ def publish_service(metrics_url: str, github_url: str, path_secret_key: str, git
     while True:
         r = requests.get(metrics_url)
         if r.status_code == 200:
-            print(r.text)
+            print(f"Response: {r}")
+
             with open("index.html", "w") as file:
                 file.write(r.text)
-            subprocess.run(["git", "add", "index.html"], check=True)
-            subprocess.run(["git", "commit", "-m", '"update index.html"'], check=True)
+            try:
+                subprocess.run(["git", "add", "index.html"], check=True)
+                subprocess.run(["git", "commit", "-m", '"update index.html"'], check=True)
 
-            subshell_command = f"ssh-add '{path_secret_key}'; git push origin"
-            subprocess.run(["ssh-agent", "bash", "-c", subshell_command], env=env)
+                subshell_command = f"ssh-add '{path_secret_key}'; git push origin"
+                subprocess.run(["ssh-agent", "bash", "-c", subshell_command], env=env)
+            except subprocess.CalledProcessError as exc:
+                logging.exception("Subprocess error")
+
         else:
             print(f"Request error: {r}")
 
