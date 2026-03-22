@@ -251,23 +251,11 @@ def split_pcap(args: argparse.ArgumentParser, prefix):
 
 def main():
     args = parse_args()
-
-    """
-    file = open(args.filename, "rb")
-    offset = 0x03661f4e - 1
-    file.read(offset)
-
-    print(file.read(8).hex())
-
-    exit(1)
-    """
-
     prefix = get_outfile_prefix(args)
     if args.start == 0:
         check_for_subfiles(prefix)
     split_pcap(args, prefix)
 
-    print("")
 
 if __name__ == "__main__":
     main()
