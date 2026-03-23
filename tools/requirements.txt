@@ -1,3 +1,5 @@
 dpkt
 python-bitcoinlib
 warnet
+matplotlib
+seaborn
