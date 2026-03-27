@@ -111,6 +111,7 @@ class BlockTracker:
 
 def run_exporter(server: ThreadingWSGIServer, server_thread: threading.Thread) -> None:
     request_time_interval = 60  # seconds
+    error_time_interval = 60 * 5  # seconds
     """
     metric_generator_binfo = Info("bitcoin_block_info", "Information about a bitcoin block", ["height"])
 
@@ -121,9 +122,15 @@ def run_exporter(server: ThreadingWSGIServer, server_thread: threading.Thread) -
     block_tracker = BlockTracker(max_blocks_in_cache=288)
 
     while server_thread.is_alive():
-        # Fetch blocks from last day
-        block_tracker.get_recent_blocks(144)
-        time.sleep(request_time_interval)
+        try:
+            # Fetch blocks from last day
+            block_tracker.get_recent_blocks(144)
+            time.sleep(request_time_interval)
+        except Exception:
+            import traceback
+            print(traceback.format_exc())
+            time.sleep(error_time_interval)
+
 
     server.shutdown()
     server.server_close()
