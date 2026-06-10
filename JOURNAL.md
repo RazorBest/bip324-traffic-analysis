@@ -115,3 +115,12 @@ The existing BIP-324 implementation of the handshake was blocking, so I ended up
 Why do we need a non-blocking protocol layer? Because we do not want to assume how nodes implement the BIP-324 protocol.
 It is possible that the responding node could start sending its first message before the initiating node finishes sending the first message entirely.
 We want our MitM layer to be as transparent as possible: any byte sent by the initiator should be redirected to the server as quickly as possible.
+
+## 06.06.2026 (BIP-324 MitM)
+
+**Journal:**
+
+After 2 months of work from @muchai254, a big PR got merged: [Separate BIP-324 Protocol from MITM Logic](https://github.com/RazorBest/bip324-mitm/pull/10).
+When I have first written bip324-mitm, both the protocol and MitM layer were tightly coupled, as I couldn't use the existing implementation of bip324.
+However, I was planning to decouple them, but didn't have enough time for that. Fortunately, @muchai254 took the issue, and now we have a separate bip324 streamed implementation!
+It's a state machine that can take one byte at a time, even at the handshake step!
