@@ -124,3 +124,29 @@ After 2 months of work from @muchai254, a big PR got merged: [Separate BIP-324 P
 When I have first written bip324-mitm, both the protocol and MitM layer were tightly coupled, as I couldn't use the existing implementation of bip324.
 However, I was planning to decouple them, but didn't have enough time for that. Fortunately, @muchai254 took the issue, and now we have a separate bip324 streamed implementation!
 It's a state machine that can take one byte at a time, even at the handshake step!
+
+
+## 17.06.2026 (BIP-324 MitM)
+
+**Journal:**
+
+Immediately after muchai's merged PR, I continued working on bip324-mitm by providing [a fully working example](https://github.com/RazorBest/bip324-mitm/pull/19) that is using [nfq-rs](https://github.com/nbdd0121/nfq-rs) to do packet interception, modification and the entire MitM setup provided by this library.
+The PR also brought some additional tests for some bugs that I've found while testing the example, made a step towards a more clean public API and the `UserPacketRelay` which is an interface through which users of the library can receive the decrypted packets between the client and the server.
+
+When using nfq-rs, I had found [a bug that was effectively not letting me modify packets](https://github.com/nbdd0121/nfq-rs) (the sole reason I switched from libpcap to NFQUEUE).
+
+One challenge in implementing the MitM is that I had to replicate part of the TCP stack. nfq-rs is based on netfilter's subsytem of Linux, where you tell iptables to store the packets on a queue (NFQUEUE) until a user-space program decides what to do with them.
+The problem is that very little TCP processing happens at netfilter's level. Netfilter only determines if the packet should be dropped and who should receive it.
+TCP buffering and reordering logic is performed later in Linux's network stack, when netfilter is already done. And since NFQUEUE is part of netfilter, it means that the user-space program will receive all the unordered and retransmitted TCP packets.
+And, since our BIP-324 MitM layer has a state, and any byte that goes through it modifies the state, we have to make sure that the bytes come in order, and we don't feed
+the same bytes twice. Consequently, I needed to replicate some TCP logic in the MitM example, which was more work than expected. But eventually, I got it in a workable state.
+I tried not to address all the edge cases, since this was only an PoC example that proves how the bip324-mitm library could be used.
+
+While this was a more work than expected it invalidated one preconception about MitM attacks: it's very hard to do them with low latency.
+While I could've tried to offload the TCP logic to an external TCP library, it would've brought both a performance overhead and a possible technical debt, since
+then I would also had to address all the TCP working modes. In reality TCP state holds a lot of info for detecting congestion and lost packets. But we didn't need
+that - we only needed to pass packets from one side to the other, modify them, and store the modifications for retransmitted packets.
+
+However, in the bip324-traffic-analysis project, I would like a more robust approach to the TCP layer, when doing MitM. But I'm not talking about a full TCP implementation.
+I still want a low latency layer that's as thin as possible. However, it should be more generic, and the TCP session state should be decoupled from the specific application state.
+This is what I'm going to work at for the next weeks.
