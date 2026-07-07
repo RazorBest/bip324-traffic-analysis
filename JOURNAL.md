@@ -150,3 +150,12 @@ that - we only needed to pass packets from one side to the other, modify them, a
 However, in the bip324-traffic-analysis project, I would like a more robust approach to the TCP layer, when doing MitM. But I'm not talking about a full TCP implementation.
 I still want a low latency layer that's as thin as possible. However, it should be more generic, and the TCP session state should be decoupled from the specific application state.
 This is what I'm going to work at for the next weeks.
+
+
+## 06.07.2026 (Snarf)
+
+A new project branched out of this research: [snarf-rs](https://github.com/RazorBest/snarf-rs).
+This is what I was talking about when I said I wanted a more robust TCP layer for performing MitM attacks. What it does: it abstracts away nfq-rs and it gives you
+access to a function that you can implement: it receives a session and some mutable data. That's it. The data is fed in a stream-like manner (preserving TCP's model)
+and retransmissions and reordering are handled internally. For the next weeks I'm going to work on snarf and then implement the interceptor that uses snarf and
+dumps decrypted data in pcap files.
